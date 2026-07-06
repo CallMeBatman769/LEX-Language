@@ -8,5 +8,5 @@ At the moment, LEX is only supported on Windows.
 
 
 # Example program:
-** var str testVar = Hello World! **
-** say testVar **
+var str testVar = Hello World!
+say testVar
