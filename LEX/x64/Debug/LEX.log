@@ -1,0 +1,6 @@
+﻿  Parse.cpp
+C:\Users\olisc\source\repos\LEX\LEX\Parse.cpp(24,25): warning C4101: "e": Unreferenzierte lokale Variable
+C:\Users\olisc\source\repos\LEX\LEX\Parse.cpp(99,1): warning C4715: "FindVariables": Nicht alle Codepfade geben einen Wert zurück.
+  LEX.vcxproj -> C:\Users\olisc\source\repos\LEX\x64\Debug\LEX.exe
+  Der Befehl "pwsh.exe" ist entweder falsch geschrieben oder
+  konnte nicht gefunden werden.

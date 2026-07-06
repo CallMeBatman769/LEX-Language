@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="LEX/LEX.vcxproj" Id="014ddc80-3241-4c07-be0f-7ec50b8c7e19" />
+</Solution>
