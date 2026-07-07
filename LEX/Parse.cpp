@@ -3,7 +3,10 @@
 #include <mutex>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 #include "Parse.h"
+
+namespace fs = std::filesystem;
 
 std::mutex VariablesMutex;
 std::vector<Variable> Variables;
@@ -49,7 +52,7 @@ bool FindVariables(std::string Filepath)
 		if (command == "var")
 		{
 			std::string type, name, equals, value;
-
+			//Example use: var int Variable = 123
 			if (ss >> type >> name >> equals)
 			{
 				if (equals == "=")
@@ -73,6 +76,7 @@ bool FindVariables(std::string Filepath)
 		else if (command == "say")
 		{
 			std::string varName;
+			//example: say TestVar
 			if (ss >> varName)
 			{
 				bool Found = false;
@@ -92,6 +96,81 @@ bool FindVariables(std::string Filepath)
 				if (!Found)
 				{
 					std::cout << "Couldn't find variable with name '" << varName << "'" << std::endl;
+				}
+			}
+		}
+		else if (command == "contin")
+		{
+			std::string FilePath, arrow, varName;
+			//Example: contin Text.txt -> TestVar
+			if (ss >> FilePath >> arrow >> varName)
+			{
+				if (arrow == "->")
+				{
+					
+					if (!fs::exists(FilePath))
+					{
+						std::cerr << "Error: " << FilePath << " doesn't exist!" << std::endl;
+						continue;
+					}
+					std::ifstream FileContent(FilePath);
+					if (!FileContent.is_open())
+					{
+						std::cerr << "Error: Couldn't open file!" << std::endl;
+						continue;
+					}
+					std::string content((std::istreambuf_iterator<char>(FileContent)),
+						std::istreambuf_iterator<char>());
+					bool found = false;
+					std::lock_guard<std::mutex> lock(VariablesMutex);
+					for (auto& variable : Variables)
+					{
+						if (variable.VName == varName)
+						{
+							variable.Value = content;
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+					{
+						std::cerr << "Runtime Error: Couldn't find variable with name " << varName << std::endl;
+					}
+				}
+				else
+				{
+					std::cerr << "Syntax error: Expected '->' operator." << std::endl;
+				}
+			}
+		}
+		else if (command == "contout")
+		{
+			std::string varName, arrow, FilePath;
+			//example: contout TestVar -> Path
+			if (ss >> varName >> arrow >> FilePath)
+			{
+				if (arrow == "->")
+				{
+					bool Found = false;
+					std::lock_guard<std::mutex> lock(VariablesMutex);
+					for (auto& variable : Variables)
+					{
+						if (variable.VName == varName)
+						{
+							std::ofstream File(FilePath);
+							File << variable.Value;
+							Found = true;
+						}
+					}
+					if (!Found)
+					{
+						std::cerr << "Runtime Error: No variable with name " << varName << " Found!" << std::endl;
+					}
+					
+				}
+				else
+				{
+					std::cerr << "Syntax Error: expected '->' operator!" << std::endl;
 				}
 			}
 		}
